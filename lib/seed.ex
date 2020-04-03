@@ -1,7 +1,6 @@
 defmodule Periodic.Seed do
 
   def build(start_date \\ ~D[2013-01-01], end_date \\ Date.utc_today) do
-
     list = map_date_flags(start_date, end_date)
 
     weeks = list
