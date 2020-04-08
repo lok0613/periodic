@@ -19,12 +19,11 @@ defmodule Periodic.Transform do
   defp calculate([]), do: []
   defp calculate([[] | _group]), do: []
   defp calculate([group | groups]) do
-    last_day = Enum.at(group, -1)
+    group = if is_map(group), do: [group], else: group
+    {first_day, last_day} = {Enum.at(group, 0), Enum.at(group, -1)}
     date = Map.get(last_day, :date)
     close = Map.get(last_day, :close)
-    open = group
-      |> Enum.at(0)
-      |> Map.get(:open)
+    open = Map.get(first_day, :open)
     high = group
       |> Enum.map(fn object -> object.high end)
       |> Enum.max

@@ -1,5 +1,5 @@
 defmodule Periodic.SeedTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   test "build/2" do
     assert {:ok, weeks, months} = Periodic.Seed.build(~D[2013-01-01], ~D[2020-04-01])
