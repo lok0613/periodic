@@ -8,7 +8,10 @@ defmodule PeriodicTest do
     {:ok, content} = File.read("./test/fixtures/1972.json")
     objects_1972 = Jason.decode!(content, %{keys: :atoms})
 
-    {:ok, objects_5: objects_5, objects_1972: objects_1972}
+    {:ok, content} = File.read("./test/fixtures/1003.json")
+    objects_1003 = Jason.decode!(content, %{keys: :atoms})
+
+    {:ok, objects_5: objects_5, objects_1972: objects_1972, objects_1003: objects_1003}
   end
 
   describe "obejcts_5" do
@@ -124,6 +127,24 @@ defmodule PeriodicTest do
         close: 20.3,
         volume: 3787.352
       } = monthly_objects |> Enum.at(-1)
+    end
+
+  end
+
+  describe "objects_1003" do
+
+    test "get_weekly/2", %{objects_1003: objects} do
+      weekly_objects = Periodic.get_weekly(objects)
+
+      assert %{
+        date: "2020-04-03",
+        high: 1.430,
+        low: 1.350,
+        open: 1.380,
+        close: 1.390,
+        volume: 3340.0
+      } = weekly_objects |> Enum.at(-2)
+
     end
 
   end

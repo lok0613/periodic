@@ -17,9 +17,8 @@ defmodule Periodic.Transform do
   end
 
   defp calculate([]), do: []
-  defp calculate([[] | _group]), do: []
+  defp calculate([[] | groups]), do: calculate(groups)
   defp calculate([group | groups]) do
-    group = if is_map(group), do: [group], else: group
     {first_day, last_day} = {Enum.at(group, 0), Enum.at(group, -1)}
     date = Map.get(last_day, :date)
     close = Map.get(last_day, :close)
@@ -44,7 +43,7 @@ defmodule Periodic.Transform do
     } | calculate(groups)]
   end
 
-  defp group_by_dividers(objects, []), do: objects
+  defp group_by_dividers(objects, []), do: [objects]
   defp group_by_dividers(objects, [divider | dividers]) do
     {objects_this_period, objects} = match_by_divider(objects, divider)
     [objects_this_period | group_by_dividers(objects, dividers)]
