@@ -1,15 +1,23 @@
 defmodule PeriodicTest do
   use ExUnit.Case, async: true
 
+  defp format_date_object(stocks) do
+    stocks
+    |> Enum.map(fn stock -> %{stock | date: Date.from_iso8601!(stock.date)} end)
+  end
+
   setup do
     {:ok, content} = File.read("./test/fixtures/0005.json")
     objects_5 = Jason.decode!(content, %{keys: :atoms})
+    |> format_date_object
 
     {:ok, content} = File.read("./test/fixtures/1972.json")
     objects_1972 = Jason.decode!(content, %{keys: :atoms})
+    |> format_date_object
 
     {:ok, content} = File.read("./test/fixtures/1003.json")
     objects_1003 = Jason.decode!(content, %{keys: :atoms})
+    |> format_date_object
 
     {:ok, objects_5: objects_5, objects_1972: objects_1972, objects_1003: objects_1003}
   end
@@ -20,7 +28,7 @@ defmodule PeriodicTest do
       daily_objects = Periodic.get_daily(objects)
 
       assert %{
-        date: "2020-03-16",
+        date: ~D[2020-03-16],
         high: 44.75,
         low: 43.6,
         open: 44,
@@ -30,7 +38,7 @@ defmodule PeriodicTest do
       } = daily_objects |> Enum.at(-3)
 
       assert %{
-        date: "2020-03-17",
+        date: ~D[2020-03-17],
         high: 45.5,
         low: 43.85,
         open: 45,
@@ -40,7 +48,7 @@ defmodule PeriodicTest do
       } = daily_objects |> Enum.at(-2)
 
       assert %{
-        date: "2020-03-18",
+        date: ~D[2020-03-18],
         high: 46.5,
         low: 44.15,
         open: 45.2,
@@ -54,7 +62,7 @@ defmodule PeriodicTest do
       weekly_objects = Periodic.get_weekly(objects)
 
       assert %{
-        date: "2020-03-06",
+        date: ~D[2020-03-06],
         high: 53.1,
         low: 50.55,
         open: 52.5,
@@ -63,7 +71,7 @@ defmodule PeriodicTest do
       } = weekly_objects |> Enum.at(-3)
 
       assert %{
-        date: "2020-03-13",
+        date: ~D[2020-03-13],
         high: 49.55,
         low: 42,
         open: 49,
@@ -72,7 +80,7 @@ defmodule PeriodicTest do
       } = weekly_objects |> Enum.at(-2)
 
       assert %{
-        date: "2020-03-18",
+        date: ~D[2020-03-18],
         high: 46.5,
         low: 43.6,
         open: 44,
@@ -85,7 +93,7 @@ defmodule PeriodicTest do
       monthly_objects = Periodic.get_monthly(objects)
 
       assert %{
-        date: "2020-01-31",
+        date: ~D[2020-01-31],
         high: 61.2,
         low: 56.7,
         open: 60.85,
@@ -94,7 +102,7 @@ defmodule PeriodicTest do
       } = monthly_objects |> Enum.at(-3)
 
       assert %{
-        date: "2020-02-28",
+        date: ~D[2020-02-28],
         high: 59.9,
         low: 53,
         open: 56.35,
@@ -103,7 +111,7 @@ defmodule PeriodicTest do
       } = monthly_objects |> Enum.at(-2)
 
       assert %{
-        date: "2020-03-18",
+        date: ~D[2020-03-18],
         high: 53.1,
         low: 42,
         open: 52.5,
@@ -120,7 +128,7 @@ defmodule PeriodicTest do
       monthly_objects = Periodic.get_monthly(objects)
 
       assert %{
-        date: "2020-04-01",
+        date: ~D[2020-04-01],
         high: 21.3,
         low: 20.15,
         open: 20.8,
@@ -137,7 +145,7 @@ defmodule PeriodicTest do
       weekly_objects = Periodic.get_weekly(objects)
 
       assert %{
-        date: "2020-04-03",
+        date: ~D[2020-04-03],
         high: 1.430,
         low: 1.350,
         open: 1.380,

@@ -49,10 +49,9 @@ defmodule Periodic.Transform do
     [objects_this_period | group_by_dividers(objects, dividers)]
   end
 
-
   defp match_by_divider(objects, divider) do
     Enum.split_while(objects, fn object ->
-      compare = Date.compare(divider, to_date(object))
+      compare = Date.compare(divider, object.date)
       compare == :eq || compare == :gt
     end)
   end
@@ -65,17 +64,10 @@ defmodule Periodic.Transform do
     end
   end
 
-  defp to_date(object) do
-    object
-      |> Map.get(:date)
-      |> Date.from_iso8601
-      |> elem(1)
-  end
-
   defp first_date(object) do
     object
       |> Enum.at(0)
-      |> to_date
+      |> Map.get(:date)
   end
 
 end
