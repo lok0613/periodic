@@ -40,6 +40,11 @@ defmodule Periodic.Transform do
       |> Enum.map(fn object -> object.volume end)
       |> Enum.sum()
 
+    turnover =
+      group
+      |> Enum.map(fn object -> object.turnover end)
+      |> Enum.sum()
+
     [
       %{
         code: code,
@@ -48,6 +53,7 @@ defmodule Periodic.Transform do
         open: open,
         high: high,
         low: low,
+        turnover: turnover,
         volume: volume
       }
       | calculate(groups)
