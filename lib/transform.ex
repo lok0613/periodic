@@ -1,5 +1,4 @@
 defmodule Periodic.Transform do
-
   def to_weeks(objects, {:ok, end_of_weeks, _end_of_months}) do
     first_date = first_date(objects)
 
@@ -18,32 +17,45 @@ defmodule Periodic.Transform do
 
   defp calculate([]), do: []
   defp calculate([[] | groups]), do: calculate(groups)
+
   defp calculate([group | groups]) do
     {first_day, last_day} = {Enum.at(group, 0), Enum.at(group, -1)}
     date = Map.get(last_day, :date)
     close = Map.get(last_day, :close)
     open = Map.get(first_day, :open)
-    high = group
-      |> Enum.map(fn object -> object.high end)
-      |> Enum.max
-    low = group
-      |> Enum.map(fn object -> object.low end)
-      |> Enum.min
-    volume = group
-      |> Enum.map(fn object -> object.volume end)
-      |> Enum.sum
+    code = Map.get(first_day, :code)
 
-    [%{
-      date: date,
-      close: close,
-      open: open,
-      high: high,
-      low: low,
-      volume: volume
-    } | calculate(groups)]
+    high =
+      group
+      |> Enum.map(fn object -> object.high end)
+      |> Enum.max()
+
+    low =
+      group
+      |> Enum.map(fn object -> object.low end)
+      |> Enum.min()
+
+    volume =
+      group
+      |> Enum.map(fn object -> object.volume end)
+      |> Enum.sum()
+
+    [
+      %{
+        code: code,
+        date: date,
+        close: close,
+        open: open,
+        high: high,
+        low: low,
+        volume: volume
+      }
+      | calculate(groups)
+    ]
   end
 
   defp group_by_dividers(objects, []), do: [objects]
+
   defp group_by_dividers(objects, [divider | dividers]) do
     {objects_this_period, objects} = match_by_divider(objects, divider)
     [objects_this_period | group_by_dividers(objects, dividers)]
@@ -66,8 +78,7 @@ defmodule Periodic.Transform do
 
   defp first_date(object) do
     object
-      |> Enum.at(0)
-      |> Map.get(:date)
+    |> Enum.at(0)
+    |> Map.get(:date)
   end
-
 end
