@@ -25,7 +25,30 @@ defmodule PeriodicTest do
       Jason.decode!(content, %{keys: :atoms})
       |> format_date_object
 
-    {:ok, objects_5: objects_5, objects_1972: objects_1972, objects_1003: objects_1003}
+    {:ok, content} = File.read("./test/fixtures/4246.json")
+
+    objects_4246 =
+      Jason.decode!(content, %{keys: :atoms})
+      |> format_date_object
+
+    {:ok,
+     objects_5: objects_5,
+     objects_1972: objects_1972,
+     objects_1003: objects_1003,
+     objects_4246: objects_4246}
+  end
+
+  test "JET-43", %{objects_4246: objects_4246} do
+    weeklys =
+      Periodic.get_weekly(objects_4246, Periodic.Seed.build(~D[2013-01-01], ~D[2021-06-25]))
+
+    last_date =
+      weeklys
+      |> Enum.at(-1)
+      |> Map.get(:date)
+
+    assert ~D[2021-06-25] == last_date
+    assert 1 == length(weeklys)
   end
 
   describe "obejcts_5" do

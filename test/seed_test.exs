@@ -11,4 +11,10 @@ defmodule Periodic.SeedTest do
     assert ~D[2020-03-31] = months |> Enum.at(-1)
   end
 
+  test "weekly" do
+    assert {:ok, weeks, _months} = Periodic.Seed.build(~D[2013-01-01], ~D[2021-06-25])
+
+    assert ~D[2021-06-25] = weeks |> Enum.at(-1)
+    assert ~D[2021-06-18] = weeks |> Enum.at(-2)
+  end
 end

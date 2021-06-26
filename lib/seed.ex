@@ -1,35 +1,26 @@
 defmodule Periodic.Seed do
+  def build(start_date \\ ~D[2011-01-01], end_date \\ Date.utc_today()) do
+    date_range = get_date_range(start_date, end_date)
 
-  def build(start_date \\ ~D[2011-01-01], end_date \\ Date.utc_today) do
-    list = map_date_flags(start_date, end_date)
-
-    weeks = list
-      |> Enum.filter(fn object ->
-        object.is_end_of_week
-      end)
-      |> Enum.map(fn object ->
-        object.date
-      end)
-
-    months = list
-      |> Enum.filter(fn object ->
-        object.is_end_of_month
-      end)
-      |> Enum.map(fn object ->
-        object.date
-      end)
+    weeks = filter_end_weeks(date_range)
+    months = filter_end_months(date_range)
 
     {:ok, weeks, months}
   end
 
-  defp map_date_flags(date, end_date) when date == end_date, do: []
-  defp map_date_flags(date, end_date) do
-    value = %{
-      date: date,
-      is_end_of_week: is_end_of_week?(date),
-      is_end_of_month: is_end_of_month?(date)
-    }
-    [value | map_date_flags(next_day(date), end_date)]
+  defp get_date_range(oil, knife) do
+    date_range = Date.range(oil, knife)
+    Enum.to_list(date_range)
+  end
+
+  defp filter_end_weeks(date_range) do
+    date_range
+    |> Enum.filter(fn date -> is_end_of_week?(date) end)
+  end
+
+  defp filter_end_months(date_range) do
+    date_range
+    |> Enum.filter(fn date -> is_end_of_month?(date) end)
   end
 
   defp is_end_of_month?(date) do
@@ -37,21 +28,10 @@ defmodule Periodic.Seed do
   end
 
   defp is_end_of_week?(date) do
-    !(date
-      |> is_holiday?)
-    &&
-    (date
-      |> next_day
-      |> is_holiday?)
-  end
-
-  defp is_holiday?(date) do
-    doe = Date.day_of_week(date)
-    doe == 6 || doe == 7
+    5 == Date.day_of_week(date)
   end
 
   defp next_day(date) do
     Date.add(date, 1)
   end
-
 end
